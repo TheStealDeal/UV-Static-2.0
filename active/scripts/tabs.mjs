@@ -221,7 +221,9 @@ async function addTab(link) {
   tab.title = decodeURIComponent(
     __uv$config.decodeUrl(url.substring(url.lastIndexOf("/") + 1))
   ).replace(/^https?:\/\//, "");
-  tab.url = search(link);
+  // Ensure search() always receives a template so unexpected input doesn't
+  // throw an error when performing a search query.
+  tab.url = search(link, "https://html.duckduckgo.com/html?t=h_&q=%s");
   tab.proxiedUrl = url;
   tab.icon = null;
   tab.view = tabFrame(tab);
@@ -257,7 +259,7 @@ if (urlParams.has("inject")) {
   const injection = urlParams.get("inject");
 
   setTimeout(() => {
-    addTab(injection)
-    focusTab()
+    addTab(injection);
+    focusTab();
   }, 100);
 }
