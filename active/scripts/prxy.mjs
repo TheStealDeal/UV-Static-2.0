@@ -29,12 +29,15 @@ export async function getUV(input) {
   let url = search(input, "https://html.duckduckgo.com/html?t=h_&q=%s");
 
   let wispUrl = "wss://gointospace.app/wisp/";
-  if ((await connection.getTransport()) !== "/active/prxy/epoxy/index.mjs") {
+
+  // Attempt to use the epoxy transport first and fall back to libcurl if it
+  // fails. Previously the logic always set the transport to libcurl due to a
+  // misplaced path check, preventing epoxy from ever being used.
+  try {
     await connection.setTransport("/active/prxy/epoxy/index.mjs", [
       { wisp: wispUrl },
     ]);
-  }
-  if ((await connection.getTransport()) !== "/activeprxy/libcurl/libcurl.mjs") {
+  } catch (err) {
     await connection.setTransport("/active/prxy/libcurl/libcurl.mjs", [
       { wisp: wispUrl },
     ]);
